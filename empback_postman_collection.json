@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "empback-api-collection",
+		"name": "EmpBack API Ecosystem",
+		"description": "Comprehensive API collection for the EmpBack Learning & Career Platform.\n\n## Features Covered\n- **Authentication**: Users (Students, Job Seekers, Professionals) & Admins\n- **Core Entities**: Courses, Jobs, Internships, Mentors, Companies\n- **Business Logic**: \n    - Job Applications (ATS)\n    - Mentorship Booking & Slot Management\n    - Course Enrollment\n    - Admin Moderation (Approve/Reject)\n\n## Pre-configured Environments\nThis collection uses a global variable `baseUrl`. \n- Default: `http://localhost:3000/api`\n\n## Automated Token Management\nLogin requests contain **Tests** scripts that automatically save the `token` to your environment variable. You don't need to copy-paste tokens manually!",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Authentication (Start Here)",
+			"item": [
+				{
+					"name": "Login - Student (John)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.token);",
+									"console.log(\"Token updated for Student\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"student@test.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "Login as a Student user. \n**Credentials**: student@test.com / password123\n**Effect**: Automatically sets the `token` variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Job Seeker (Jane)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.token);",
+									"console.log(\"Token updated for Job Seeker\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"seeker@test.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "Login as a Job Seeker. \n**Credentials**: seeker@test.com / password123"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Admin (Super Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.token);",
+									"console.log(\"Token updated for Admin\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@empback.com\",\n    \"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"login"
+							]
+						},
+						"description": "Login as Super Admin. \n**Credentials**: admin@empback.com / admin123"
+					},
+					"response": []
+				},
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"New User\",\n    \"email\": \"newuser@test.com\",\n    \"password\": \"password123\",\n    \"current_status\": \"Student\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Courses",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course By ID (With Recommendations)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "REPLACE_WITH_VALID_ID",
+									"description": "Paste an ID from Get All Courses response"
+								}
+							]
+						},
+						"description": "Fetches course details AND dynamic recommendations for related Jobs, Internships, and Mentors."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Advanced Node.js Patterns\",\n  \"hook\": \"Master backend architecture.\",\n  \"category\": \"Development\",\n  \"skills\": [\"Node.js\", \"Microservices\"],\n  \"courseType\": \"Self-paced\",\n  \"priceAmount\": 2999,\n  \"instructorName\": \"Tech Lead\",\n  \"status\": \"Published\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"courses"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Jobs & Internships",
+			"item": [
+				{
+					"name": "Get All Jobs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/jobs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/jobs/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"jobs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "REPLACE_WITH_VALID_ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Internships",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/internships",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"internships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Apply for Job (ATS)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"job_id\": \"REPLACE_WITH_JOB_ID\",\n    \"company_id\": \"REPLACE_WITH_COMPANY_ID\",\n    \"resume_url\": \"http://example.com/my-resume.pdf\",\n    \"cover_letter\": \"I am very interested in this role.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/applications/apply/job",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"applications",
+								"apply",
+								"job"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Mentorship & Booking",
+			"item": [
+				{
+					"name": "Get Mentorship Programs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mentorships",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mentorships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Program Details (With Slots)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mentorships/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mentorships",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "REPLACE_WITH_PROGRAM_ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Book a Slot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mentorship_id\": \"REPLACE_WITH_PROGRAM_ID\",\n    \"slot_id\": \"REPLACE_WITH_SLOT_ID\",\n    \"user_notes\": \"I need career advice on switching to PM roles.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mentorships/book",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mentorships",
+								"book"
+							]
+						},
+						"description": "Simulates payment and books a specific slot."
+					},
+					"response": []
+				},
+				{
+					"name": "My Bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/mentorships/user/my-bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mentorships",
+								"user",
+								"my-bookings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. User Profile",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\": \"John Updated\",\n    \"bio\": \"Passionate learner.\",\n    \"skills\": [\"React\", \"Node.js\", \"TypeScript\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Admin Moderation",
+			"item": [
+				{
+					"name": "Approve Job (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/jobs/:id/approve",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"jobs",
+								":id",
+								"approve"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "REPLACE_WITH_JOB_ID"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Mentor (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/mentors/:id/approve",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"mentors",
+								":id",
+								"approve"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "REPLACE_WITH_MENTOR_ID"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
